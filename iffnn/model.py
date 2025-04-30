@@ -393,7 +393,7 @@ class IFFNN(nn.Module):
 
 
     def train_model(self, train_loader, valid_loader, num_epochs=50, learning_rate=1e-3,
-                    criterion=None, optimizer=None, save_path=None, print_every=10):
+                    criterion=None, optimizer=None, save_path=None, print_every=10, patience=5):
         """Trains the IFFNN model (no changes needed)."""
         t1 = time.time()
         history = {'train_loss': [], 'valid_loss': [], 'valid_acc': [], 'best_epoch': -1}
@@ -477,6 +477,11 @@ class IFFNN(nn.Module):
             if print_every and (epoch + 1) % print_every == 0:
                 print(f'Epoch [{epoch+1}/{num_epochs}], Train Loss: {avg_train_loss:.4f}, '
                       f'Valid Loss: {avg_valid_loss:.4f}, Valid Acc: {valid_acc:.2f}%')
+            if patience > 0:
+                if 'best_epoch' in history and history['best_epoch'] != -1:
+                    if epoch - history['best_epoch'] >= patience:
+                        print(f"Early stopping at epoch {epoch+1} (patience reached).")
+                        break
 
             if valid_acc > best_valid_acc:
                 best_valid_acc = valid_acc
@@ -501,3 +506,34 @@ class IFFNN(nn.Module):
                   print(f"Error loading best model state from {save_path}: {e}")
 
         return history
+    
+    def evaluate_model(self, test_loader):
+        """
+        Evaluates the model on a test dataset.
+
+        Args:
+            test_loader (DataLoader): DataLoader for the test dataset.
+
+        Returns:
+            dict: A dictionary containing the test accuracy.
+        """
+        self.eval()
+        n_correct = 0
+        n_samples = 0
+
+        with torch.no_grad():
+            for batch_x, batch_y in test_loader:
+                batch_x = batch_x.to(self.device)
+                batch_y_orig = batch_y
+                outputs = self.forward(batch_x)
+                if self.bicls:
+                    predicted = (torch.sigmoid(outputs) > 0.5).long()
+                    n_correct += (predicted.cpu() == batch_y_orig.view(-1,1)).sum().item()
+                    n_samples += batch_y_orig.size(0)
+                else:
+                    _, predicted = torch.max(outputs.data, 1)
+                    n_correct += (predicted.cpu() == batch_y_orig).sum().item()
+                    n_samples += batch_y_orig.size(0)
+        test_acc = 100.0 * n_correct / n_samples
+        print(f"Test Accuracy: {test_acc:.2f}%")
+        return {'test_accuracy': test_acc}

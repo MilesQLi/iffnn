@@ -98,6 +98,10 @@ history = model.train_model(
 )
 
 # --- 5. Evaluate the Model ---
+
+model.evaluate_model(test_loader)
+
+# Or you can evaluate manually:
 model.eval()
 n_correct = 0
 n_samples = 0
@@ -109,6 +113,7 @@ with torch.no_grad():
 
 test_accuracy = 100.0 * n_correct / n_samples
 print(f"\nTest Accuracy: {test_accuracy:.2f}%")
+
 
 # --- 6. Get Explanations ---
 print("\n--- Explaining first 2 samples from the test set ---")

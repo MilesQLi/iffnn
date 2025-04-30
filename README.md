@@ -79,7 +79,7 @@ history = model.train_model(
 # --- 3. Evaluate (Optional) ---
 # model.load_state_dict(torch.load('best_iffnn_model.pth')) # Load best model if saved
 model.eval()
-# ... (Your code to evaluate accuracy on test_loader using model.predict) ...
+model.evaluate_model(test_loader)
 
 # --- 4. Get Explanations ---
 print("\n--- Explaining a sample batch from the test set ---")

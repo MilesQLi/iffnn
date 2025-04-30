@@ -12,7 +12,6 @@ setup(
     packages=find_packages(),
     install_requires=[
         'torch>=1.7.0', # Specify a reasonable minimum version
-        'numpy>=1.19.0',
         'tqdm>=4.50.0',
         # scikit-learn is only needed for the example, not the core library
     ],

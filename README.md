@@ -22,16 +22,22 @@ IFFNNs aim to combine the predictive power of neural networks with the interpret
 
 ## Installation
 
-You can install the library directly from the source code:
+You can install the latest release directly from PyPI:
 
 ```bash
-git clone https://github.com/milesqli/iffnn.git 
-cd iffnn_library
-pip install .
+pip install iffnn
 ```
-Or directly from GitHub (once pushed):
+
+Or specify a version (e.g., version 0.2.0):
+
 ```bash
-pip install git+https://github.com/milesqli/iffnn.git 
+pip install iffnn==0.2.0
+```
+
+If you want the latest development version:
+
+```bash
+pip install git+https://github.com/milesqli/iffnn.git
 ```
 
 ---
